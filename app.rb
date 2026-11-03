@@ -8,7 +8,8 @@ set :bind, '0.0.0.0'
 set :port, ENV.fetch('PORT', 4567)
 
 set :host_authorization, {
-  permitted_hosts: ['.onrender.com', 'localhost', '127.0.0.1']
+  permitted_hosts: ['.onrender.com', 'localhost', '127.0.0.1'],
+  allow_if: ->(env) { env['PATH_INFO'] == '/salud' }
 }
 
 set :database, 'data/inventario.db'
