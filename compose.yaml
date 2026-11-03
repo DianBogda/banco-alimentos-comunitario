@@ -1,0 +1,9 @@
+services:
+  banco-alimentos:
+    build: .
+    container_name: banco-alimentos
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

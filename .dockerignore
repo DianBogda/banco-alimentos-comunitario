@@ -1,0 +1,5 @@
+.git
+.kiro
+data/*
+*.log
+.DS_Store

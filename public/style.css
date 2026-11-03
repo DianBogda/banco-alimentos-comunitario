@@ -1,0 +1,504 @@
+:root {
+  --turquesa: #5DC1B9;
+  --turquesa-claro: #8AE0DB;
+  --turquesa-suave: #B8F0ED;
+  --naranja: #FF9800;
+  --naranja-claro: #FFC340;
+  --fondo: #F7F8F5;
+  --texto: #29434A;
+  --blanco: #FFFFFF;
+  --borde: #DCE8E5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+.encabezado {
+  background: linear-gradient(
+    110deg,
+    var(--turquesa) 0%,
+    var(--turquesa-claro) 45%,
+    var(--naranja) 100%
+  );
+  color: var(--texto);
+  padding: 28px 6%;
+}
+
+.encabezado h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.encabezado p {
+  margin: 5px 0 0;
+}
+
+.contenedor {
+  width: min(1100px, 92%);
+  margin: 30px auto;
+}
+
+.bienvenida {
+  margin-bottom: 25px;
+}
+
+.bienvenida h2 {
+  margin-bottom: 5px;
+}
+
+.panel {
+  background: var(--blanco);
+  padding: 25px;
+  margin-bottom: 25px;
+  border-radius: 14px;
+  border: 1px solid var(--borde);
+  box-shadow: 0 3px 12px rgba(41, 67, 74, 0.06);
+}
+
+.panel h2 {
+  margin-top: 0;
+}
+
+.panel h3 {
+  margin-top: 15px;
+}
+
+/* Formularios */
+
+.formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.campo label {
+  font-weight: bold;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--texto);
+  background: var(--blanco);
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--turquesa);
+  outline-offset: 2px;
+}
+
+.alimentos-recepcion {
+  grid-column: 1 / -1;
+  padding: 18px;
+  background: var(--fondo);
+  border-radius: 10px;
+}
+
+.alimentos-recepcion h3 {
+  margin-top: 0;
+}
+
+.alimento-item {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  padding: 18px;
+  margin-bottom: 15px;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+/* Encabezado y botón Quitar de cada alimento */
+
+.alimento-item-encabezado {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.alimento-item-encabezado .boton-eliminar {
+  width: auto;
+  min-height: 36px;
+  padding: 8px 14px;
+}
+
+/* Campos de cada alimento */
+
+.alimento-campos {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.boton,
+.boton-secundario,
+.boton-eliminar {
+  min-height: 44px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.boton {
+  background: var(--turquesa);
+  color: var(--texto);
+}
+
+.boton:hover {
+  background: var(--turquesa-claro);
+}
+
+.boton-secundario {
+  background: var(--naranja);
+  color: var(--texto);
+}
+
+.boton-secundario:hover {
+  background: var(--naranja-claro);
+}
+
+.boton-eliminar {
+  background: #FBE5DE;
+  color: #873D2B;
+}
+
+.boton-eliminar:hover {
+  background: #F5CEC1;
+}
+
+.formulario > .boton {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.alimentos-recepcion > .boton-secundario {
+  margin-top: 5px;
+}
+
+/* Resumen */
+
+.resumen-inventario {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.resumen-inventario > div {
+  padding: 20px;
+  text-align: center;
+  background: var(--turquesa-suave);
+  border-radius: 10px;
+}
+
+.resumen-inventario strong {
+  display: block;
+  font-size: 30px;
+}
+
+.resumen-inventario p {
+  margin: 5px 0 0;
+}
+
+/* Notas y mensajes */
+
+.nota {
+  color: #52676B;
+  font-size: 14px;
+  margin-top: 18px;
+}
+
+.vacio {
+  padding: 20px;
+  background: var(--turquesa-suave);
+  border-radius: 8px;
+}
+
+/* Alertas */
+
+.alerta-vencimiento {
+  padding: 16px;
+  margin-bottom: 12px;
+  border-left: 5px solid var(--naranja);
+  background: #FFF6E8;
+  border-radius: 8px;
+}
+
+.alerta-vencimiento p {
+  margin: 6px 0;
+}
+
+/* Inventario y tablas */
+
+.grupo-alimento {
+  margin-top: 25px;
+}
+
+.grupo-alimento h3 {
+  padding: 10px 14px;
+  background: var(--turquesa-suave);
+  border-radius: 8px;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+th,
+td {
+  padding: 13px;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+}
+
+th {
+  background: var(--turquesa-suave);
+}
+
+tr:hover td {
+  background: #FAFCFB;
+}
+
+/* Estados de los lotes */
+
+.estado {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.pendiente {
+  background: #FFF0D5;
+  color: #805000;
+}
+
+.disponible {
+  background: #DDF3E5;
+  color: #245C3B;
+}
+
+.no-apto {
+  background: #FBE5DE;
+  color: #873D2B;
+}
+
+.vencido {
+  background: #F6DADA;
+  color: #8B2929;
+}
+
+/* Acciones de revisión */
+
+.formulario-revision {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 130px;
+}
+
+.formulario-revision button {
+  width: 100%;
+}
+
+/* Pie de página */
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #52676B;
+  font-size: 14px;
+}
+
+/* Adaptación a teléfonos */
+
+@media (max-width: 650px) {
+  .encabezado {
+    padding: 22px 5%;
+  }
+
+  .encabezado h1 {
+    font-size: 23px;
+  }
+
+  .contenedor {
+    width: 94%;
+    margin: 20px auto;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .alimentos-recepcion {
+    grid-column: 1;
+    padding: 12px;
+  }
+
+  .alimento-item {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .alimento-campos {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-inventario {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-revision {
+    min-width: 120px;
+  }
+}
+
+/* ===== Ajustes visuales: Banco de Alimentos ===== */
+
+/* Tarjetas del resumen */
+.resumen-inventario > div:nth-child(1) {
+  background: var(--turquesa-claro);
+}
+
+.resumen-inventario > div:nth-child(2) {
+  background: var(--turquesa-suave);
+}
+
+/* La tercera tarjeta conserva su apariencia actual */
+
+/* Botón para eliminar alimentos */
+.boton-eliminar {
+  background: #FFE7BD;
+  color: #805000;
+}
+
+.boton-eliminar:hover {
+  background: #FFDB9A;
+}
+
+/* Alerta preventiva: mejorar contraste con el fondo */
+.alerta-vencimiento .estado.pendiente {
+  background: #FFE2A8;
+  color: #805000;
+}
+
+/* Disponible: conservar el verde, armonizando su tonalidad */
+.disponible {
+  background: #DCEFE8;
+  color: #285B4B;
+}
+
+/* Encabezado de la tabla de stock disponible */
+.contenedor > section.panel:nth-of-type(5) th {
+  background: var(--turquesa);
+}
+
+/* Nombre del alimento en el detalle de lotes */
+.grupo-alimento h3 {
+  background: var(--turquesa);
+}
+
+/* Encabezados de las tablas del detalle de lotes */
+.contenedor > section.panel:nth-of-type(6) th {
+  background: var(--turquesa-claro);
+}
+
+/* ===== Paleta definitiva de tarjetas resumen ===== */
+
+/* Lotes registrados: turquesa claro */
+.resumen-inventario > div:nth-child(1) {
+  background: #8AE0DB;
+}
+
+/* Pendientes de revisión: verde suave, armónico con el degradé */
+.resumen-inventario > div:nth-child(2) {
+  background: #DCEFE8;
+}
+
+/* Próximos a vencer: naranja suave */
+.resumen-inventario > div:nth-child(3) {
+  background: #FFE5C2;
+}
+
+/* ===== Estado de alimentos no aptos ===== */
+
+.no-apto {
+  background: #FFE5B5;
+  color: #805000;
+}
+
+/* Colores de los estados en el detalle de lotes */
+.grupo-alimento .estado.pendiente {
+  background: #DCEFE8;
+  color: #285B4B;
+}
+
+.grupo-alimento .estado.disponible {
+  background: #8AE0DB;
+  color: #155E59;
+}
+
+/* Organización del formulario de revisión */
+.formulario-revision {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.formulario-revision textarea {
+  display: block;
+  width: 100%;
+  min-height: 75px;
+  padding: 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  resize: vertical;
+}
+
+/* Separación entre los botones de revisión */
+.formulario-revision > button {
+  margin-bottom: 8px;
+}

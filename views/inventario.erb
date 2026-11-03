@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco de Alimentos Comunitario</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <header class="encabezado">
+    <div>
+      <h1>Banco de Alimentos Comunitario</h1>
+      <p>Control de inventario por lotes</p>
+    </div>
+  </header>
+
+  <main class="contenedor">
+
+    <section class="bienvenida">
+      <h2>Inventario de alimentos</h2>
+      <p>Registra las donaciones, revisa los alimentos y consulta las fechas de vencimiento.</p>
+    </section>
+
+    <!-- Resumen del inventario -->
+    <section class="panel">
+      <h2>Resumen</h2>
+
+      <div class="resumen-inventario">
+        <div>
+          <strong><%= @total_lotes %></strong>
+          <p>Lotes registrados</p>
+        </div>
+
+        <div>
+          <strong><%= @pendientes_revision %></strong>
+          <p>Pendientes de revisión</p>
+        </div>
+
+        <div>
+          <strong><%= @alertas.length %></strong>
+          <p>Próximos a vencer</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Registro de recepción -->
+    <section class="panel">
+      <h2>Registrar recepción de alimentos</h2>
+      <p>Una recepción puede incluir distintos tipos de alimentos.</p>
+
+      <form action="/recepciones" method="POST" class="formulario">
+
+        <div class="campo">
+          <label for="fecha_recepcion">Fecha de recepción *</label>
+          <input
+            type="date"
+            id="fecha_recepcion"
+            name="fecha_recepcion"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="responsable">Persona responsable *</label>
+          <input
+            type="text"
+            id="responsable"
+            name="responsable"
+            required
+          >
+        </div>
+
+        <div class="alimentos-recepcion">
+          <h3>Alimentos recibidos</h3>
+
+          <div id="lista-alimentos">
+
+            <div class="alimento-item">
+
+              <div class="alimento-item-encabezado">
+                <strong>Alimento</strong>
+
+                <button
+                  type="button"
+                  class="boton-eliminar"
+                  onclick="eliminarAlimento(this)"
+                >
+                  Eliminar este alimento
+                </button>
+              </div>
+
+              <div class="alimento-campos">
+
+                <div class="campo">
+                  <label>Nombre del alimento *</label>
+                  <input type="text" name="alimento[]" required>
+                </div>
+
+                <div class="campo">
+                  <label>Cantidad *</label>
+                  <input
+                    type="number"
+                    name="cantidad[]"
+                    min="0.01"
+                    step="0.01"
+                    required
+                  >
+                </div>
+
+                <div class="campo">
+                  <label>Unidad *</label>
+                  <select name="unidad[]" required>
+                    <option value="">Seleccionar</option>
+                    <option value="kg">Kilogramos</option>
+                    <option value="gr">Gramos</option>
+                    <option value="unidades">Unidades</option>
+                    <option value="litros">Litros</option>
+                    <option value="cc">Centímetros cúbicos</option>
+                    <option value="paquetes">Paquetes</option>
+                  </select>
+                </div>
+
+                <div class="campo">
+                  <label>Fecha de vencimiento</label>
+                  <input type="date" name="fecha_vencimiento[]">
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            class="boton-secundario"
+            onclick="agregarAlimento()"
+          >
+            + Agregar otro alimento
+          </button>
+        </div>
+
+        <button type="submit" class="boton">
+          Registrar recepción
+        </button>
+      </form>
+
+      <p class="nota">
+        Los alimentos registrados quedan pendientes de revisión.
+        No se consideran disponibles hasta confirmar que son aptos.
+      </p>
+    </section>
+
+    <!-- Alertas de vencimiento -->
+    <section class="panel">
+      <h2>Alertas de vencimiento</h2>
+
+      <% if @alertas.empty? %>
+        <p class="vacio">No hay alimentos próximos a vencer.</p>
+      <% else %>
+        <% @alertas.each do |lote| %>
+          <div class="alerta-vencimiento">
+            <strong><%= lote['alimento'] %></strong>
+            <p>
+              Vence el <%= lote['fecha_vencimiento'] %>
+              · <%= lote['cantidad'] %> <%= lote['unidad'] %>
+            </p>
+
+            <% dias = (Date.iso8601(lote['fecha_vencimiento']) - Date.today).to_i %>
+
+            <% if dias == 0 %>
+              <span class="estado vencido">Atención: vence hoy</span>
+            <% elsif dias <= 7 %>
+              <span class="estado vencido">Atención: vence en 7 días o menos</span>
+            <% else %>
+              <span class="estado pendiente">Vence dentro de 14 días</span>
+            <% end %>
+
+            <p>Estado: <%= lote['estado'].to_s.tr('_', ' ') %></p>
+          </div>
+        <% end %>
+      <% end %>
+    </section>
+
+    <!-- Stock disponible -->
+    <section class="panel">
+      <h2>Stock disponible</h2>
+      <p>Solo se consideran los alimentos revisados y aptos para entrega.</p>
+
+      <% if @stock_por_alimento.empty? %>
+        <p class="vacio">Todavía no hay alimentos disponibles.</p>
+      <% else %>
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Alimento</th>
+                <th>Cantidad disponible</th>
+                <th>Unidad</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @stock_por_alimento.each do |item| %>
+                <tr>
+                  <td><strong><%= item['alimento'] %></strong></td>
+                  <td><%= item['cantidad_disponible'] %></td>
+                  <td><%= item['unidad'] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- Consulta de lotes -->
+    <section class="panel">
+      <h2>Detalle de lotes registrados</h2>
+      <p class="nota">
+        Los lotes disponibles se ordenan por fecha de vencimiento,
+        priorizando los que vencen primero (FEFO).
+      </p>
+
+      <% if @lotes_por_alimento.empty? %>
+        <p class="vacio">Todavía no hay alimentos registrados.</p>
+      <% else %>
+
+        <% @lotes_por_alimento.each do |alimento, lotes| %>
+          <div class="grupo-alimento">
+            <h3><%= alimento %></h3>
+
+            <div class="tabla-contenedor">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID lote</th>
+                    <th>Cantidad</th>
+                    <th>Recepción</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Responsable</th>
+                    <th>Revisión</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <% lotes.each do |lote| %>
+                    <tr>
+                      <td><%= lote['id'] %></td>
+
+                      <td>
+                        <%= lote['cantidad'] %> <%= lote['unidad'] %>
+                      </td>
+
+                      <td><%= lote['fecha_recepcion'] %></td>
+
+                      <td>
+                        <%= lote['fecha_vencimiento'].to_s.empty? ? 'Sin fecha' : lote['fecha_vencimiento'] %>
+                      </td>
+
+                      <td>
+                        <% estado = lote['estado'] %>
+
+                        <% if estado == 'Disponible' %>
+                          <span class="estado disponible">Disponible</span>
+                        <% elsif estado == 'No_apto' %>
+                          <span class="estado no-apto">No apto</span>
+                        <% elsif estado == 'Vencido' %>
+                          <span class="estado vencido">Vencido</span>
+                        <% else %>
+                          <span class="estado pendiente">Pendiente de revisión</span>
+                        <% end %>
+                      </td>
+
+                      <td><%= lote['responsable'] %></td>
+
+                      <td>
+                        <% if estado == 'Pendiente_de_revision' %>
+                          <form
+                            action="/lotes/<%= lote['id'] %>/revision"
+                            method="POST"
+                            class="formulario-revision"
+                          >
+                            <button
+                              type="submit"
+        		      name="estado"
+                              value="Disponible"
+                              class="boton"
+                            >
+        	 	      Marcar apto
+      			    </button>
+    			  </form>
+
+                          <div class="formulario-revision">
+
+                            <button
+                              type="button"
+                              class="boton-secundario"
+                              onclick="document.getElementById('motivo-<%= lote['id'] %>').style.display = 'block';"
+                            >
+                              Marcar no apto
+                            </button>                           
+                            
+                            <form
+ 			      action="/lotes/<%= lote['id'] %>/revision"
+        		      method="POST"
+                              id="motivo-<%= lote['id'] %>"
+                              style="display: none;"
+                            >
+                              <label for="texto-motivo-<%= lote['id'] %>">
+                                Motivo de rechazo (obligatorio):
+                              </label>
+                            
+                              <textarea
+                                id="motivo-<%= lote['id'] %>"
+                                name="motivo"
+                                required
+                                placeholder="Indica por qué el alimento no es apto"
+                              ></textarea>
+
+                              <button
+                                type="submit"
+                                name="estado"
+                                value="No_apto"
+                                class="boton-secundario"
+                              >
+                                Confirmar rechazo
+                              </button>
+                            </form>
+
+                          </div>
+
+                        <% elsif estado == 'Vencido' %>
+                          <span>—</span>
+                        
+                        <% elsif estado == 'No_apto' %>
+                          <span>
+                            Motivo: <%= lote['motivo_estado'].to_s.empty? ? 'No registrado' : lote['motivo_estado'] %>
+                          </span> 
+
+                        <% else %>
+                          <span>Revisado</span>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% end %>
+
+      <% end %>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Banco de Alimentos Comunitario · Prototipo</p>
+  </footer>
+
+  <!-- Permite agregar y eliminar alimentos del formulario -->
+  <script>
+    const plantillaAlimento = document.querySelector('.alimento-item').cloneNode(true);
+
+    function agregarAlimento() {
+      const lista = document.getElementById('lista-alimentos');
+      const nuevaFila = plantillaAlimento.cloneNode(true);
+
+      nuevaFila.querySelectorAll('input').forEach(input => {
+        input.value = '';
+      });
+
+      nuevaFila.querySelectorAll('select').forEach(select => {
+        select.selectedIndex = 0;
+      });
+
+      lista.appendChild(nuevaFila);
+    }
+
+    function eliminarAlimento(boton) {
+      const fila = boton.closest('.alimento-item');
+
+      if (fila) {
+        fila.remove();
+      }
+    }
+  </script>
+
+</body>
+</html>
