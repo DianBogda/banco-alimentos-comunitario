@@ -117,9 +117,15 @@ No contempla todavía la gestión completa de familias beneficiarias, registro d
 
 Los datos utilizados para las pruebas y demostraciones son ficticios. La versión desplegada es demostrativa y no debe utilizarse para gestionar información real de beneficiarios o donantes.
 
-## Demo
+**Almacenamiento en la demo:** La aplicación utiliza SQLite para almacenar los registros. En el despliegue gratuito de Render no se ha configurado un disco persistente, por lo que los datos de prueba pueden perderse cuando la instancia se reinicia o se vuelve a desplegar. Por esta razón, la demo debe utilizarse exclusivamente con información ficticia y no con registros reales de beneficiarios o donaciones.
 
-Enlace de demostración: *Pendiente de confirmar publicación.*
+## Demo en línea
+
+La aplicación está desplegada en Render y puede probarse desde el siguiente enlace:
+
+[**Banco de Alimentos Comunitario – Abrir aplicación**](https://banco-alimentos-comunitario.onrender.com/inventario)
+
+**Nota:** La instancia gratuita de Render puede tardar unos segundos en responder después de un período de inactividad.
 
 ## Repositorio
 
