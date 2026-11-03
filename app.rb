@@ -5,7 +5,7 @@ require 'json'
 require 'fileutils'
 
 set :bind, '0.0.0.0'
-set :port, 4567
+set :port, ENV.fetch('PORT', 4567)
 set :database, 'data/inventario.db'
 
 # Conexión a la base de datos.
