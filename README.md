@@ -1,26 +1,43 @@
 # Banco de Alimentos Comunitario
 
-Sistema web para apoyar la gestión de inventario de un banco de alimentos comunitario, facilitando el registro, revisión y seguimiento de donaciones mediante el control de lotes y la priorización de alimentos según su fecha de vencimiento.
+Sistema web para apoyar la gestión de un banco de alimentos comunitario, facilitando el registro y control de donaciones, la administración de inventario por lotes, la gestión de familias beneficiarias y el seguimiento de entregas.
 
 ## Contexto del proyecto
 
-Este proyecto nace de la necesidad de apoyar a organizaciones comunitarias que reciben donaciones de alimentos de manera variable y necesitan administrar sus existencias, evitar pérdidas por vencimiento y mejorar el control de los productos disponibles.
+Este proyecto nace de la necesidad de apoyar a organizaciones comunitarias que reciben donaciones de alimentos de manera variable y necesitan administrar sus existencias, evitar pérdidas por vencimiento y mejorar la distribución de los recursos disponibles.
 
-La propuesta busca ofrecer una herramienta sencilla que facilite el trabajo de las personas voluntarias y contribuya a una gestión más ordenada del inventario.
+La propuesta busca ofrecer una herramienta sencilla y accesible que facilite el trabajo de las personas voluntarias y contribuya a una gestión más ordenada, transparente y equitativa.
 
-## Funcionalidad principal
+## Funcionalidades principales
 
-El feature desarrollado es el **Control de Inventario por Lotes y Priorización FEFO** (*First Expired, First Out*).
+La aplicación contempla tres áreas principales:
 
-Sus funcionalidades principales son:
+### 1. Control de inventario por lotes y priorización FEFO
 
-- **Registro de donaciones:** permite registrar los alimentos recibidos y sus respectivos datos, incluyendo cantidad, unidad, fecha de recepción y fecha de vencimiento.
-- **Identificación de lotes:** cada alimento registrado genera un lote con un identificador único.
+(*First Expired, First Out*)
+
+- **Registro de donaciones:** permite registrar alimentos recibidos, cantidades, unidades y fechas de recepción y vencimiento.
+- **Identificación de lotes:** cada registro genera un lote con identificador único.
 - **Revisión de alimentos:** permite aprobar o rechazar los lotes recibidos, registrando el motivo cuando un alimento no es apto.
-- **Consulta de inventario:** muestra los alimentos agrupados y permite consultar el detalle de sus lotes y cantidades disponibles.
+- **Consulta de inventario:** muestra los alimentos y permite consultar el detalle de sus lotes y cantidades disponibles.
 - **Priorización FEFO:** organiza los lotes según su fecha de vencimiento, priorizando aquellos que deben utilizarse primero.
-- **Alertas de vencimiento:** identifica alimentos próximos a vencer y distingue las alertas preventivas de las prioritarias.
+- **Alertas de vencimiento:** identifica alimentos próximos a vencer y distingue alertas preventivas y prioritarias.
 - **Control de vencimientos:** los alimentos vencidos quedan excluidos del inventario disponible.
+
+### 2. Gestión de familias beneficiarias
+
+- Registro y consulta de familias.
+- Administración de integrantes y estado de las familias.
+- Consulta de la última entrega registrada.
+- Acceso al historial de entregas de cada familia.
+
+### 3. Registro y seguimiento de entregas
+
+- Registro de alimentos y cantidades entregadas a cada familia.
+- Consulta de disponibilidad de inventario.
+- Validación de existencias antes de registrar una entrega.
+- Actualización del inventario a partir de las entregas registradas.
+- Seguimiento de las entregas realizadas.
 
 ## Tecnologías utilizadas
 
@@ -42,15 +59,22 @@ banco-alimentos-comunitario/
 │   │   └── identidad-visual-banco-alimentos/
 │   │       └── SKILL.md
 │   └── specs/
-│       └── inventario-lotes-fefo/
+│       ├── inventario-lotes-fefo/
+│       │   ├── requirements.md
+│       │   ├── design.md
+│       │   ├── tasks.md
+│       │   └── .config.kiro
+│       └── familias-entregas/
 │           ├── requirements.md
 │           ├── design.md
-│           └── .config.kiro
+│           └── tasks.md
 ├── data/
 ├── public/
 │   └── style.css
 ├── views/
-│   └── inventario.erb
+│   ├── inventario.erb
+│   ├── familias.erb
+│   └── entregas.erb
 ├── AGENTS.md
 ├── app.rb
 ├── Dockerfile
@@ -100,24 +124,25 @@ docker compose down
 
 ## Spec Driven Development
 
-El desarrollo de este feature se realizó utilizando el enfoque **Spec Driven Development (SDD)**, partiendo de la definición del problema y construyendo una especificación que orientó la implementación.
+El desarrollo del proyecto utiliza el enfoque **Spec Driven Development (SDD)**, partiendo de la definición de necesidades y criterios de aceptación para orientar el diseño y la implementación de funcionalidades.
 
 El proyecto incluye:
 
 - `AGENTS.md`: contexto e instrucciones generales para el agente.
-- `.kiro/specs/inventario-lotes-fefo/requirements.md`: definición del problema, solución propuesta y criterios de aceptación.
-- `.kiro/specs/inventario-lotes-fefo/design.md`: diseño técnico de la solución.
+- `.kiro/specs/inventario-lotes-fefo/requirements.md`: requisitos y criterios de aceptación del control de inventario.
+- `.kiro/specs/inventario-lotes-fefo/design.md`: diseño técnico de la gestión de inventario por lotes.
+- `.kiro/specs/familias-entregas/requirements.md`: requisitos de gestión de familias y registro de entregas.
+- `.kiro/specs/familias-entregas/design.md`: diseño técnico de las funcionalidades.
+- `.kiro/specs/familias-entregas/tasks.md`: tareas definidas para orientar su implementación.
 - `.kiro/skills/identidad-visual-banco-alimentos/SKILL.md`: instrucciones para mantener la identidad visual de la aplicación.
 
 ## Alcance y consideraciones
 
-Esta versión corresponde a un prototipo académico enfocado en el control de inventario por lotes, revisión de alimentos, priorización FEFO y alertas de vencimiento.
-
-No contempla todavía la gestión completa de familias beneficiarias, registro de entregas ni distribución de canastas.
+La aplicación integra funcionalidades de inventario, gestión de familias beneficiarias y registro de entregas. Su desarrollo y validación se realizan de manera progresiva.
 
 Los datos utilizados para las pruebas y demostraciones son ficticios. La versión desplegada es demostrativa y no debe utilizarse para gestionar información real de beneficiarios o donantes.
 
-**Almacenamiento en la demo:** La aplicación utiliza SQLite para almacenar los registros. En el despliegue gratuito de Render no se ha configurado un disco persistente, por lo que los datos de prueba pueden perderse cuando la instancia se reinicia o se vuelve a desplegar. Por esta razón, la demo debe utilizarse exclusivamente con información ficticia y no con registros reales de beneficiarios o donaciones.
+**Almacenamiento en la demo:** La aplicación utiliza SQLite para almacenar los registros. En el despliegue gratuito de Render no se ha configurado un disco persistente, por lo que los datos de prueba pueden perderse cuando la instancia se reinicia o se vuelve a desplegar. Por esta razón, la demo debe utilizarse exclusivamente con información ficticia.
 
 ## Demo en línea
 
