@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Familias beneficiarias</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <header class="encabezado">
+    <div>
+      <h1>Banco de Alimentos Comunitario</h1>
+      <p>Gestión de familias beneficiarias</p>
+    </div>
+  </header>
+
+  <main class="contenedor">
+
+    <section class="bienvenida">
+      <div class="titulo-navegacion">
+        <h2>Familias beneficiarias</h2>
+
+        <div class="acciones-navegacion">
+          <a href="/inventario" class="boton-secundario enlace-boton">
+            Inventario
+          </a>
+
+          <a href="/entregas" class="boton-secundario enlace-boton">
+            Entregas
+          </a>
+        </div>
+      </div>
+      <p>Registra y consulta las familias que reciben apoyo del banco de alimentos.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Registrar una familia</h2>
+      <% if @error %>
+        <p>
+          <span class="estado vencido">
+            Atención: <%= @error %>
+          </span>
+        </p>
+      <% end %>
+      <p>Utiliza un código ficticio para identificar cada familia. No ingreses nombres ni datos personales.</p>
+
+      <form action="/familias" method="POST" class="formulario">
+
+        <div class="campo">
+          <label for="apellidos">Apellidos de la familia *</label>
+          <input
+            type="text"
+            id="apellidos"
+            name="apellidos"
+            placeholder="Ejemplo: Pérez Soto"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="integrantes">Número de integrantes *</label>
+          <input
+            type="number"
+            id="integrantes"
+            name="integrantes"
+            min="1"
+            step="1"
+            required
+          >
+        </div>
+
+        <button type="submit" class="boton">
+          Registrar familia
+        </button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Familias registradas</h2>
+
+      <% if @familias.empty? %>
+        <p class="vacio">Todavía no hay familias registradas.</p>
+      <% else %>
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+		<th>Apellidos</th>
+		<th>Integrantes</th>
+		<th>Registro</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @familias.each do |familia| %>
+                <tr>
+                  <td><strong><%= familia['codigo'] %></strong></td>
+		  <td>
+  		    <%= familia['apellidos'].to_s.empty? ? 'Sin apellidos registrados' : familia['apellidos'] %>
+		  </td>
+		  <td><%= familia['integrantes'] %></td>
+		  <td><%= familia['created_at'] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Banco de Alimentos Comunitario · Prototipo</p>
+  </footer>
+</body>
+</html>

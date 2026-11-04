@@ -502,3 +502,31 @@ footer {
 .formulario-revision > button {
   margin-bottom: 8px;
 }
+
+/* Enlaces de navegación tipo botón */
+.titulo-navegacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.titulo-navegacion h2 {
+  margin: 0;
+}
+
+.enlace-boton {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Navegación de la pantalla de entregas */
+.acciones-navegacion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}

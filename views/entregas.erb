@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de entregas</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <header class="encabezado">
+    <div>
+      <h1>Banco de Alimentos Comunitario</h1>
+      <p>Registro y seguimiento de entregas</p>
+    </div>
+  </header>
+
+  <main class="contenedor">
+
+    <section class="bienvenida">
+      <div class="titulo-navegacion">
+        <h2>Registro de entregas</h2>
+
+        <div class="acciones-navegacion">
+          <a href="/inventario" class="boton-secundario enlace-boton">
+            Inventario
+          </a>
+          <a href="/familias" class="boton-secundario enlace-boton">
+            Familias
+          </a>
+        </div>
+      </div>
+
+      <p>Registra los alimentos entregados a cada familia beneficiaria.</p>
+    </section>
+
+    <section class="panel">
+      <h3>Nueva entrega</h3>
+
+      <% if @error %>
+        <p>
+          <span class="estado vencido">
+            Atención: <%= @error %>
+          </span>
+        </p>
+      <% end %>
+
+      <% if @mensaje %>
+        <p>
+          <span class="estado disponible">
+            <%= @mensaje %>
+          </span>
+        </p>
+      <% end %>
+
+      <% if @familias.empty? %>
+
+        <p>No hay familias registradas. Primero debes registrar una familia.</p>
+
+        <a href="/familias" class="boton-secundario enlace-boton">
+          Ir a familias
+        </a>
+
+      <% elsif @stock.empty? %>
+
+        <p>No hay alimentos disponibles para entregar. Revisa el inventario.</p>
+
+      <% else %>
+
+        <form action="/entregas" method="POST" class="formulario">
+
+          <div class="campo">
+            <label for="familia_id">Familia beneficiaria *</label>
+
+            <select id="familia_id" name="familia_id" required>
+              <option value="">Selecciona una familia</option>
+
+              <% @familias.each do |familia| %>
+                <option value="<%= familia['id'] %>">
+                  <%= familia['codigo'] %> - <%= familia['apellidos'] %>
+                  (<%= familia['integrantes'] %> integrantes)
+                </option>
+              <% end %>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="fecha_entrega">Fecha de entrega *</label>
+
+            <input
+              type="date"
+              id="fecha_entrega"
+              name="fecha_entrega"
+              value="<%= Date.today.iso8601 %>"
+              required>
+          </div>
+
+          <div class="campo">
+            <label for="responsable">Responsable de la entrega *</label>
+
+            <input
+              type="text"
+              id="responsable"
+              name="responsable"
+              required
+              placeholder="Nombre del voluntario">
+          </div>
+
+          <div class="alimentos-recepcion">
+
+            <h3>Alimentos de la entrega</h3>
+
+            <p class="nota">
+              Puedes agregar todos los alimentos que forman parte de esta entrega.
+            </p>
+
+            <div id="lista-alimentos">
+
+              <div class="alimento-item">
+
+                <div class="alimento-item-encabezado">
+                  <strong>Alimento 1</strong>
+
+                  <button
+                    type="button"
+                    class="boton-eliminar"
+                    onclick="quitarAlimento(this)">
+                    Quitar
+                  </button>
+                </div>
+
+                <div class="alimento-campos">
+
+                  <div class="campo">
+                    <label>Alimento disponible *</label>
+
+                    <select name="producto[]" required>
+                      <option value="">Selecciona un alimento</option>
+
+                      <% @stock.each do |item| %>
+                        <option value="<%= "#{item['alimento']}|||#{item['unidad']}" %>">
+                          <%= item['alimento'] %> -
+                          <%= item['unidad'] %>:
+                          <%= item['cantidad_disponible'] %> disponibles
+                        </option>
+                      <% end %>
+                    </select>
+                  </div>
+
+                  <div class="campo">
+                    <label>Cantidad a entregar *</label>
+
+                    <input
+                      type="number"
+                      name="cantidad[]"
+                      min="0.01"
+                      step="any"
+                      required
+                      placeholder="Ejemplo: 2">
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              class="boton-secundario"
+              onclick="agregarAlimento()">
+              + Agregar otro alimento
+            </button>
+
+          </div>
+
+          <button type="submit" class="boton">
+            Registrar entrega
+          </button>
+
+        </form>
+
+      <% end %>
+
+    </section>
+
+    <section class="panel">
+      <h2>Historial de entregas</h2>
+      <p>Últimas 50 entregas registradas.</p>
+
+      <% if @entregas.empty? %>
+        <p>Aún no hay entregas registradas.</p>
+      <% else %>
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Familia</th>
+                <th>Alimentos entregados</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @entregas.each do |entrega| %>
+                <tr>
+                  <td><%= entrega['fecha_entrega'] %></td>
+                  <td>
+                    <strong><%= entrega['codigo'] %></strong><br>
+                    <%= entrega['apellidos'] %>
+                  </td>
+                  <td>
+                    <% detalles = @detalles_entregas.select { |d| d['entrega_id'] == entrega['id'] } %>
+                    <% detalles.each do |detalle| %>
+                      <div>
+                        <%= detalle['alimento'] %>:
+                        <strong><%= detalle['cantidad'] %> <%= detalle['unidad'] %></strong>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td><%= entrega['responsable'] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Banco de Alimentos Comunitario</p>
+  </footer>
+
+  <script>
+    function agregarAlimento() {
+      const lista = document.getElementById('lista-alimentos');
+      const original = lista.querySelector('.alimento-item');
+      const nuevo = original.cloneNode(true);
+
+      nuevo.querySelectorAll('select, input').forEach(campo => {
+        campo.value = '';
+      });
+
+      lista.appendChild(nuevo);
+      actualizarNumeracion();
+    }
+
+    function quitarAlimento(boton) {
+      const lista = document.getElementById('lista-alimentos');
+
+      if (lista.querySelectorAll('.alimento-item').length > 1) {
+        boton.closest('.alimento-item').remove();
+        actualizarNumeracion();
+      }
+    }
+
+    function actualizarNumeracion() {
+      document.querySelectorAll('#lista-alimentos .alimento-item')
+        .forEach((item, indice) => {
+          item.querySelector('strong').textContent =
+            'Alimento ' + (indice + 1);
+        });
+    }
+  </script>
+
+</body>
+</html>
+
